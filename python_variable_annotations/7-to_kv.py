@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
-"""Complex types - string and int/float to tuple"""
-from typing import Union, Tuple
+"""Function to_kv that takes a string k and an int OR float v"""
+
+from typing import Tuple, Union
 
 
 def to_kv(k: str, v: Union[int, float]) -> Tuple[str, float]:
-    """ Write a type-annotated function to_kv that takes a string k and an int
-    OR float v as arguments and returns a tuple. The first element of the tuple
-    is the string k. The second element is the square of the int/float v and
-    should be annotated as a float. """
-    vSquare = (v * v)
-    result: Tuple[str, float] = (k, vSquare)
-    return result
+    """Function that returns a tuple with k and the square of v"""
+    return k, v ** 2.0

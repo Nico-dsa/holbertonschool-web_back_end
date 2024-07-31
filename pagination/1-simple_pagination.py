@@ -1,17 +1,9 @@
 #!/usr/bin/env python3
-"""1. Simple pagination"""
+"""Simple pagination"""
+
 import csv
 import math
-from typing import Tuple, List
-
-
-def index_range(page: int, page_size: int) -> Tuple[int, int]:
-    """The function should return a tuple of size two containing a start index
-    and an end index corresponding to the range of indexes to return in a list
-    for those particular pagination parameters."""
-    start = (page - 1) * page_size
-    end = page * page_size
-    return(start, end)
+from typing import List, Tuple
 
 
 class Server:
@@ -29,20 +21,23 @@ class Server:
             with open(self.DATA_FILE) as f:
                 reader = csv.reader(f)
                 dataset = [row for row in reader]
-            self.__dataset = dataset[1:]
+                self.__dataset = dataset[1:]
 
         return self.__dataset
 
     def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
-        """finds the correct indexes to paginate the dataset correctly
-        and return the appropriate page of the dataset"""
-        assert isinstance(page, int) and page > 0
-        assert isinstance(page_size, int) and page_size > 0
+        """Return the appropriate page of the dataset
+        """
+        if not isinstance(page, int) or not isinstance(page_size, int):
+            raise AssertionError
+        if page <= 0 or page_size <= 0:
+            raise AssertionError
+        pagination_indexes = index_range(page=page, page_size=page_size)
+        self.dataset()
+        return self.__dataset[pagination_indexes[0]: pagination_indexes[1]]
 
-        i_range = index_range(page, page_size)
-        start = i_range[0]
-        end = i_range[1]
 
-        if end > len(self.dataset()):
-            return []
-        return self.dataset()[start:end]
+def index_range(page: int, page_size: int) -> Tuple[int, int]:
+    """Return a tuple of size two containing a start index and an end index
+    """
+    return ((page - 1) * page_size, page * page_size)

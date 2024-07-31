@@ -24,7 +24,7 @@ class Server:
             with open(self.DATA_FILE) as f:
                 reader = csv.reader(f)
                 dataset = [row for row in reader]
-            self.__dataset = dataset[1:]
+                self.__dataset = dataset[1:]
 
         return self.__dataset
 
@@ -40,21 +40,24 @@ class Server:
         return self.__indexed_dataset
 
     def get_hyper_index(self, index: int = None, page_size: int = 10) -> Dict:
-        '''Return Dictionary of indexed dataset'''
-        assert index <= len(self.__indexed_dataset)
+        """Returns a dictionary containing the following key-value pairs
+        """
+        dataset_length = len(self.dataset())
+        assert (
+                index is None or
+                0 <= index < dataset_length), "Index out of range"
 
-        next_index = index
-        data = []
-        for _ in range(page_size):
-            while not self.indexed_dataset().get(next_index):
-                next_index += 1
-            value = self.indexed_dataset().get(next_index)
-            data.append(value)
-            next_index += 1
+        next_index = index + page_size
+        if index is not None:
+            for i in range(index, next_index):
+                if i not in self.__indexed_dataset:
+                    next_index += 1
+
+        data = [self.__indexed_dataset[i] for i in range(index, next_index)
+                if i in self.__indexed_dataset]
 
         return {
-            "index": index,
-            "data": data,
-            "page_size": page_size,
-            "next_index": next_index
-        }
+                "index": index,
+                "next_index": next_index,
+                "page_size": page_size,
+                "data": data}
